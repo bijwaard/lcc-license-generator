@@ -1,5 +1,6 @@
 #include <memory>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+//#include <boost/filesystem.hpp>
 #include <fstream>
 
 #include "crypto_helper.hpp"
@@ -11,7 +12,8 @@
 
 namespace license {
 using namespace std;
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 unique_ptr<CryptoHelper> CryptoHelper::getInstance() {
 #ifdef HAS_OPENSSL

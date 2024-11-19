@@ -26,33 +26,44 @@ CryptoHelperLinux::CryptoHelperLinux() : m_pktmp(nullptr) {
 	static int initialized = 0;
 	if (initialized == 0) {
 		initialized = 1;
-		ERR_load_ERR_strings();
+		//ERR_load_ERR_strings();
 		ERR_load_crypto_strings();
 		OpenSSL_add_all_algorithms();
 	}
 }
-void CryptoHelperLinux::generateKeyPair() {
+void CryptoHelperLinux::generateKeyPair(int keyType, int keySize) {
 	if (m_pktmp) {
 		EVP_PKEY_free(m_pktmp);
 		m_pktmp = nullptr;
 	}
 
-	EVP_PKEY_CTX *ctx;
-
-	ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+	EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new_id(keyType, NULL);
 	if (!ctx) {
+		throw std::runtime_error("Failed to create EVP_PKEY_CTX");
 	}
 
 	if (EVP_PKEY_keygen_init(ctx) <= 0) {
+		EVP_PKEY_CTX_free(ctx);
+		throw std::runtime_error("Failed to initialize keygen");
 	}
 
-	if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, 1024) <= 0) {
-		throw logic_error("error setting key properties");
+	if (keyType == EVP_PKEY_RSA) {
+		if (EVP_PKEY_CTX_set_rsa_keygen_bits(ctx, keySize) <= 0) {
+			EVP_PKEY_CTX_free(ctx);
+			throw std::logic_error("Error setting RSA key properties");
+		}
+	} else if (keyType == EVP_PKEY_EC) {
+		if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx, keySize) <= 0) {
+			EVP_PKEY_CTX_free(ctx);
+			throw std::logic_error("Error setting EC key properties");
+		}
 	}
 
 	if (EVP_PKEY_keygen(ctx, &m_pktmp) <= 0) {
-		throw logic_error("error generating keypair");
+		EVP_PKEY_CTX_free(ctx);
+		throw std::logic_error("Error generating keypair");
 	}
+
 	EVP_PKEY_CTX_free(ctx);
 }
 
@@ -61,18 +72,28 @@ const string CryptoHelperLinux::exportPrivateKey() const {
 		throw logic_error(string("Export not initialized.Call generateKeyPair first."));
 	}
 	BIO *bio_private = BIO_new(BIO_s_mem());
-	RSA *rsa = EVP_PKEY_get1_RSA(m_pktmp);
-	// EVP_PKEY_assign_RSA(m_pktmp, rsa);
-	PEM_write_bio_RSAPrivateKey(bio_private, rsa, NULL, NULL, 0, NULL, NULL);
-	// RSA_free(rsa);
-	/*PEM_write_bio_PrivateKey(bio_private, m_pktmp, nullptr, nullptr, 0,
-	 nullptr, nullptr);*/
+	if (!bio_private) {
+		throw std::runtime_error("Failed to create BIO");
+	}
+
+	if (!PEM_write_bio_PrivateKey(bio_private, m_pktmp, nullptr, nullptr, 0, nullptr, nullptr)) {
+		BIO_free(bio_private);
+		throw std::runtime_error("Failed to write private key");
+	}
+
 	int keylen = BIO_pending(bio_private);
-	char *pem_key = (char *)(calloc(keylen + 1, 1)); /* Null-terminate */
+	char *pem_key = (char *)calloc(keylen + 1, 1); // Null-terminate
+	if (!pem_key) {
+		BIO_free(bio_private);
+		throw std::runtime_error("Failed to allocate memory");
+	}
+
 	BIO_read(bio_private, pem_key, keylen);
 	BIO_free(bio_private);
-	string dest(pem_key);
+
+	std::string dest(pem_key);
 	free(pem_key);
+
 	return dest;
 }
 
@@ -81,14 +102,21 @@ const vector<unsigned char> CryptoHelperLinux::exportPublicKey() const {
 		throw logic_error(string("Export not initialized.Call generateKeyPair first."));
 	}
 	BIO *bio_public = BIO_new(BIO_s_mem());
-	RSA *rsa = EVP_PKEY_get1_RSA(m_pktmp);
-	// PEM_write_bio_RSAPublicKey(bio_public, rsa);
-	i2d_RSAPublicKey_bio(bio_public, rsa);
+	if (!bio_public) {
+		throw std::runtime_error("Failed to create BIO");
+	}
+
+	if (!PEM_write_bio_PUBKEY(bio_public, m_pktmp)) {
+		BIO_free(bio_public);
+		throw std::runtime_error("Failed to write public key");
+	}
+
 	int keylen = BIO_pending(bio_public);
-	vector<unsigned char> buffer(keylen, 0);
-	// char *pem_key = (char*) (calloc(keylen + 1, 1));
-	BIO_read(bio_public, &buffer[0], keylen);
-	BIO_free_all(bio_public);
+	std::vector<unsigned char> buffer(keylen, 0);
+
+	BIO_read(bio_public, buffer.data(), keylen);
+	BIO_free(bio_public);
+
 	return buffer;
 }
 
@@ -105,9 +133,9 @@ const string CryptoHelperLinux::signString(const string &license) const {
 		throw logic_error("Message digest creation context");
 	}
 
-	/*Initialise the DigestSign operation - SHA-256 has been selected
+	/*Initialise the DigestSign operation - SHA-512 has been selected
 	 * as the message digest function */
-	if (1 != EVP_DigestSignInit(mdctx, NULL, EVP_sha256(), NULL, m_pktmp)) {
+	if (1 != EVP_DigestSignInit(mdctx, NULL, EVP_sha512(), NULL, m_pktmp)) {
 		EVP_MD_CTX_destroy(mdctx);
 	}
 	/* Call update with the message */
@@ -146,12 +174,19 @@ void CryptoHelperLinux::loadPrivateKey(const std::string &privateKey) {
 	}
 
 	m_pktmp = nullptr;
-	BIO *bio = BIO_new_mem_buf((void *)(privateKey.c_str()), privateKey.size());
-	m_pktmp = PEM_read_bio_PrivateKey(bio, &m_pktmp, NULL, NULL);
+	BIO *bio = BIO_new_mem_buf((void *)(privateKey.c_str()), static_cast<int>(privateKey.size()));
+	if (!bio) {
+		throw std::runtime_error("Failed to create BIO");
+	}
+	m_pktmp = PEM_read_bio_PrivateKey(bio, NULL, NULL, NULL);
+	BIO_free(bio);
 	if (!m_pktmp) {
 		throw logic_error("Private key [" + privateKey + "] can't be loaded");
 	}
-	BIO_free(bio);
+	int key_length = EVP_PKEY_bits(m_pktmp);
+	if (key_length < 1024) {
+		throw std::runtime_error("Private key length is less than 1024 bits");
+	}
 }
 
 const string CryptoHelperLinux::Opensslb64Encode(const size_t slen, const unsigned char *signature) const {

@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <string>
 #include <vector>
+#include <openssl/evp.h>
 
 namespace license {
 
@@ -26,7 +27,7 @@ protected:
 	inline CryptoHelper() {}
 
 public:
-	virtual void generateKeyPair() = 0;
+        virtual void generateKeyPair(int keyType=EVP_PKEY_RSA, int keySize=4096)=0;
 	const virtual std::string exportPrivateKey() const = 0;
 	const virtual std::vector<unsigned char> exportPublicKey() const = 0;
 
