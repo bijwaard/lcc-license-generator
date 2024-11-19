@@ -28,7 +28,7 @@ typedef int bool;
 
 #endif
 
-#define PRIVATE_KEY_FNAME "private_key.rsa"
+#define PRIVATE_KEY_FNAME "private_key.pem"
 #define PUBLIC_KEY_INC_FNAME "public_key.h"
 
 /**

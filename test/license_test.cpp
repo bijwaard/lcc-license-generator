@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE test_license
 
-#include <boost/filesystem.hpp>
+#include <filesystem>
+//#include <boost/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 #include <boost/version.hpp>
 #if (BOOST_VERSION > 107000)
@@ -18,7 +19,8 @@
 
 namespace license {
 namespace test {
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using namespace license;
 using namespace std;
 

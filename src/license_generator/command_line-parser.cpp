@@ -22,13 +22,14 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <filesystem>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
 #include <boost/program_options.hpp>
 #include <boost/program_options/config.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 #include <build_properties.h>
 
 #include "../base_lib/base64.h"
@@ -38,7 +39,8 @@
 
 namespace license {
 namespace po = boost::program_options;
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using namespace std;
 
 static void printHelpHeader(const char *prog_name) {

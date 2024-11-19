@@ -6,7 +6,8 @@
  */
 
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <stdexcept>
 #include <algorithm>
 
@@ -16,7 +17,8 @@
 #include "project.hpp"
 
 namespace license {
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using json = nlohmann::json;
 using namespace inja;
 using namespace std;
@@ -52,7 +54,7 @@ static const string guess_templates_folder(const string &source_folder) {
 									 "] does not exist. tried also [" + template_fname.string() + "]");
 		}
 	}
-	fs::path normalized = templates_path.normalize();
+	fs::path normalized = templates_path.lexically_normal();
 	return normalized.string();
 }
 static const fs::path publicKeyFolder(const fs::path &product_folder, const string &product_name) {

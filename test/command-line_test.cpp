@@ -2,8 +2,9 @@
 
 #include <string>
 #include <fstream>
+#include <filesystem>
 #include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 #include <boost/version.hpp>
 #if (BOOST_VERSION > 107000)
 #include <boost/test/tools/output_test_stream.hpp>
@@ -18,7 +19,8 @@
 #include "../src/base_lib/base.h"
 #include "cout_redirect.hpp"
 
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using namespace license;
 using namespace std;
 

@@ -29,7 +29,7 @@ public:
 	// disable copy constructor
 	CryptoHelperLinux(const CryptoHelperLinux &) = delete;
 
-	virtual void generateKeyPair();
+        virtual void generateKeyPair(int keyType=EVP_PKEY_RSA, int keySize=4096);
 	const virtual string exportPrivateKey() const;
 	const virtual std::vector<unsigned char> exportPublicKey() const;
 	virtual void loadPrivateKey(const std::string &privateKey);

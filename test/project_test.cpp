@@ -1,15 +1,17 @@
 #define BOOST_TEST_MODULE test_project
 
 #include <fstream>
+#include <filesystem>
 #include <boost/test/unit_test.hpp>
-#include <boost/filesystem.hpp>
+//#include <boost/filesystem.hpp>
 #include <build_properties.h>
 
 #include "../src/license_generator/project.hpp"
 #include "../src/ini/SimpleIni.h"
 #include "../src/base_lib/base.h"
 
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using namespace license;
 using namespace std;
 

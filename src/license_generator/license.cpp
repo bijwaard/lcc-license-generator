@@ -12,7 +12,8 @@
 #include <iostream>
 #include <unordered_set>
 #include <stdexcept>
-#include <boost/filesystem.hpp>
+#include <filesystem>
+//#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include "../ini/SimpleIni.h"
@@ -22,7 +23,8 @@
 
 namespace license {
 using namespace std;
-namespace fs = boost::filesystem;
+//namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 static const unordered_set<string> NO_OUTPUT_PARAM = {
 	PARAM_BASE64,		  PARAM_LICENSE_OUTPUT, PARAM_FEATURE_NAMES,

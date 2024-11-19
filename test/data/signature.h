@@ -1,0 +1,13 @@
+#define SIGNATURE \
+	"TdfYJYTip4wc/T9sAIYTrA24yeAmveIGf/MZ2084TV0Nb0xbKLpJ78dWH8b3rL945/2m/vPpv3xZ"	\
+	"WPZlV1pv3rGhtzznhvDqOskTL4bXwyhrT9D7cR4l7nTuwGhUp0M5nqAR9O7vRWi4JjhmzuoBLAg3"	\
+	"iOWW9ZnS95ZmnOQvvZn4YI0bx2dP6tlnCHc6+VEn5oi+LRjc+elgg2fyUlAG4OyHtroRFr/W2BTl"	\
+	"RtaARfVlhFRWTXR5zVUa93H+u+zHtmi72wg5BjIrPworsv3gMQby9XyI8gARvSXs94owxVPMJvQk"	\
+	"R21joxK9ptJKqArZajx5OPaDehYDVwfjpPiNpfAItpgGIQgFH25YugHmsC+M8qZphlvLFFfL0Oxa"	\
+	"3+9ZZTbVdQzgIE+nZuDh86qR+fXhNktgJySIonPT4rHmXKL3V2M8Ch5RkMgFIYKL7J9+fm4h/uyD"	\
+	"cwd6K7SJ+7TlzbYc2y6aya/yD6FpF4/SYuxonXpr7OOLAkTYaaeoA8M9rVoJZ+Z3PDcQ51VRqvNn"	\
+	"zPope1e69/CWaAool4Sy0MdXxZ1QxvnXBYmRQlOLO/HxLcioaCJSU279nX8unNe4Mi3EAqREG2aa"	\
+	"2tDeeO9DyMLXjpoQfDWfMN8XiYbSF7IRvrCyqB2WjMJZnb49b1/iMTK42l1x4uyOBMhQP9kNB40="	\
+
+#define SIGNATURE_LEN 684
+#define TEST_STRING "testString"
