@@ -1,5 +1,6 @@
 #link_directories ( ${Boost_LIBRARY_DIR} )
-set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 ADD_LIBRARY(license_generator_lib 
 	STATIC command_line-parser.cpp license.cpp project.cpp ../ini/ConvertUTF.cpp

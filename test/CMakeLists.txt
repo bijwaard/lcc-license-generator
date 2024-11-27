@@ -1,4 +1,7 @@
-set(CMAKE_CXX_STANDARD 17)
+add_definitions(-DBOOST_ALL_NO_LIB) #Disable Boost Microsoft magic, all dependencies are handled by cmake
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 add_executable(test_license license_test.cpp)
 target_link_libraries(test_license license_generator_lib ${Boost_LIBRARIES})
 ADD_TEST(NAME test_license COMMAND test_license WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
